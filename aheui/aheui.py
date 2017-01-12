@@ -32,6 +32,9 @@ class Stack:
     def __len__(self):
         return len(self._list)
 
+    def __str__(self):
+        return str(self._list)
+
 class Queue(Stack):
     def __init__(self):
         self._list = []
@@ -115,9 +118,11 @@ class Interpreter:
     def step(self):
 
         if self.debug:
-            print(self.pos)
-            print(self.dir)
-            print(self.grid[self.pos[0]][self.pos[1]])
+            print("pos: ",self.pos)
+            print("dir: ",self.dir)
+            print("char: ",self.grid[self.pos[0]][self.pos[1]])
+            print("storage: ",self.storage[self.storage_pos])
+            print("storage_pos: ", self.storage_pos)    
         #update y then x but what if we exceed both grid edges at the same step
 
         char = self.grid[self.pos[0]][self.pos[1]]
@@ -207,7 +212,7 @@ class Interpreter:
 
         elif c == 'ㅆ':
             if len(self.storage[self.storage_pos]) >= 1:
-                self.storage[f].push(self.storage[self.storage_pos])
+                self.storage[f].push(self.storage[self.storage_pos].pop())
             self.set_dir(v)
 
         elif c == 'ㅈ':
