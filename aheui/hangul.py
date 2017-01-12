@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
 """
     korean.hangul
@@ -16,12 +17,10 @@
 """
 The only changes are removing the six.moves dependency and xrange -> range 
 """
-from __future__ import unicode_literals
 
 __all__ = ['char_offset', 'is_hangul', 'is_vowel', 'is_consonant',
            'is_initial', 'is_final', 'get_initial', 'get_vowel', 'get_final',
            'split_char', 'join_char']
-
 
 def S(*sequences):
     def to_tuple(sequence):
@@ -38,7 +37,6 @@ HANGUL_RANGE = range(ord('가'), ord('힣') + 1)
 FIRST_HANGUL = HANGUL_RANGE[0]
 del S
 
-
 def char_offset(char):
     """Returns Hangul character offset from "가"."""
     if isinstance(char, int):
@@ -50,26 +48,21 @@ def char_offset(char):
     assert offset < len(HANGUL_RANGE)
     return offset
 
-
 def is_hangul(char):
     """Checks if the given character is written in Hangul."""
     return ord(char) in HANGUL_RANGE
-
 
 def is_vowel(char):
     """Checks if the given character is a vowel of Hangul."""
     return char in VOWELS
 
-
 def is_consonant(char):
     """Checks if the given character is a consonant of Hangul."""
     return char in CONSONANTS
 
-
 def is_initial(char):
     """Checks if the given character is an initial consonant of Hangul."""
     return char in INITIALS
-
 
 def is_final(char):
     """Checks if the given character is a final consonant of Hangul. The final
@@ -77,13 +70,11 @@ def is_final(char):
     """
     return char in FINALS
 
-
 def get_initial(char):
     """Returns an initial consonant from the given character."""
     if is_initial(char):
         return char
     return INITIALS[int(char_offset(char) / (len(VOWELS) * len(FINALS)))]
-
 
 def get_vowel(char):
     """Returns a vowel from the given character."""
@@ -91,13 +82,11 @@ def get_vowel(char):
         return char
     return VOWELS[int(char_offset(char) / len(FINALS)) % len(VOWELS)]
 
-
 def get_final(char):
     """Returns a final consonant from the given character."""
     if is_final(char):
         return char
     return FINALS[char_offset(char) % len(FINALS)]
-
 
 def split_char(char):
     """Splits the given character to a tuple where the first item is the
@@ -105,7 +94,6 @@ def split_char(char):
     """
     code = char_offset(char)
     return (get_initial(code), get_vowel(code), get_final(code))
-
 
 def join_char(splitted):
     """Joins a tuple in the form ``(initial, vowel, final)`` to a Hangul
