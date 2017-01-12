@@ -6,8 +6,6 @@ import codecs
 import hangul
 import time
 
-#chcp 65001
-
 consonants = ('ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄸ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅃ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ')
 initial = ('ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ')
 vowel = ('ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ')
@@ -42,14 +40,14 @@ class Queue(Stack):
         self._list.insert(0,data)
 
 class Interpreter:
-    def __init__(self):
+    def __init__(self, debug = False):
         self.storage = {}
         self.storage_pos = ''
-        self.pos = [-1,0]
+        self.pos = [0,0]
         self.dir = (1,0) #(y,x)
         self.grid = []
         self.go = True
-        self.debug = False
+        self.debug = debug
 
         self.storage[''] = Stack()
         for c in final:
@@ -121,25 +119,6 @@ class Interpreter:
             print(self.dir)
             print(self.grid[self.pos[0]][self.pos[1]])
         #update y then x but what if we exceed both grid edges at the same step
-        if self.dir[0] > 0 and self.pos[0]+self.dir[0] >= len(self.grid):
-            print('a')
-            self.pos[0] = 0
-
-        elif self.dir[0] < 0 and self.pos[0]+self.dir[0] < 0:
-            print('b')
-            self.pos[0] = len(self.grid)-1
-        
-        elif self.dir[1] > 0 and self.pos[1]+self.dir[1] >= len(self.grid[self.pos[0]]):
-            print('c')
-            self.pos[1] = 0
-
-        elif self.dir[1] < 0 and self.pos[1]+self.dir[1] < 0:
-            print('d')
-            self.pos[1] = len(self.grid[self.pos[0]])-1
-
-        else:
-            self.pos[0] += self.dir[0]
-            self.pos[1] += self.dir[1]
 
         char = self.grid[self.pos[0]][self.pos[1]]
 
@@ -147,11 +126,9 @@ class Interpreter:
 
         if c == 'ㅇ':
             self.set_dir(v)
-            return
 
         elif c == 'ㅎ':
             self.go = False
-            return
 
         elif c == 'ㄷ':
             if len(self.storage[self.storage_pos]) >= 2:
@@ -160,7 +137,6 @@ class Interpreter:
                 self.set_dir(v)
             else:
                 self.reverse_vowel(v)
-            return
 
         elif c == 'ㄸ':
             if len(self.storage[self.storage_pos]) >= 2:
@@ -169,7 +145,6 @@ class Interpreter:
                 self.set_dir(v)
             else:
                 self.reverse_vowel(v)
-            return
 
         elif c == 'ㄴ':
             if len(self.storage[self.storage_pos]) >= 2:
@@ -178,7 +153,6 @@ class Interpreter:
                 self.set_dir(v)
             else:
                 self.reverse_vowel(v)
-            return
 
         elif c == 'ㅌ':
             if len(self.storage[self.storage_pos]) >= 2:
@@ -187,7 +161,6 @@ class Interpreter:
                 self.set_dir(v)
             else:
                 self.reverse_vowel(v)
-            return
 
         elif c == 'ㄹ':
             if len(self.storage[self.storage_pos]) >= 2:
@@ -196,18 +169,16 @@ class Interpreter:
                 self.set_dir(v)
             else:
                 self.reverse_vowel(v)
-            return
 
         elif c == 'ㅁ':
             temp = self.storage[self.storage_pos].pop()
             self.set_dir(v)
             if f == 'ㅇ':
                 if temp != None:
-                    print(temp)
+                    print(temp,end='')
             elif f == 'ㅎ':
                 if temp != None:
-                    print(chr(temp)) #here
-            return
+                    print(chr(temp),end='') #here
 
         elif c == 'ㅂ':
             self.set_dir(v)
@@ -217,32 +188,27 @@ class Interpreter:
                 self.storage[self.storage_pos].push(ord(input('enter a char:')))
             else:
                 self.storage[self.storage_pos].push(values[f])
-            return
 
         elif c == 'ㅃ':
             self.set_dir(v)
             if len(self.storage[self.storage_pos]) >= 1:
                 self.storage[self.storage_pos].push(self.storage[self.storage_pos].peek())
-            return
 
         elif c == 'ㅍ':
             self.set_dir(v)
             if len(self.storage[self.storage_pos]) >= 2:
                 x,y = self.storage[self.storage_pos].pop(), self.storage[self.storage_pos].pop()
-                self.storage[self.storage_pos].push(y)
                 self.storage[self.storage_pos].push(x)
-            return
+                self.storage[self.storage_pos].push(y)
 
         elif c == 'ㅅ':
             self.storage_pos = f
             self.set_dir(v)
-            return
 
         elif c == 'ㅆ':
             if len(self.storage[self.storage_pos]) >= 1:
                 self.storage[f].push(self.storage[self.storage_pos])
             self.set_dir(v)
-            return
 
         elif c == 'ㅈ':
             if len(self.storage[self.storage_pos]) >= 2:
@@ -252,7 +218,6 @@ class Interpreter:
                 else:
                     self.storage[self.storage_pos].push(0)
             self.set_dir(v)
-            return
 
         elif c == 'ㅊ':
             if len(self.storage[self.storage_pos]) >= 1:
@@ -260,11 +225,27 @@ class Interpreter:
                     self.set_dir(v)
                 else:
                     self.reverse_vowel(v)
-            return
 
         else:
             self.go = False
             return -1
+
+        if self.dir[0] > 0 and self.pos[0]+self.dir[0] >= len(self.grid):
+            self.pos[0] = 0
+
+        elif self.dir[0] < 0 and self.pos[0]+self.dir[0] < 0:
+            self.pos[0] = len(self.grid)-1
+        
+        elif self.dir[1] > 0 and self.pos[1]+self.dir[1] >= len(self.grid[self.pos[0]]):
+            self.pos[1] = 0
+
+        elif self.dir[1] < 0 and self.pos[1]+self.dir[1] < 0:
+            self.pos[1] = len(self.grid[self.pos[0]])-1
+
+        else:
+            self.pos[0] += self.dir[0]
+            self.pos[1] += self.dir[1]
+
 
     def run(self):
         while self.go:
@@ -273,5 +254,5 @@ class Interpreter:
             self.step()
 
 if __name__ == '__main__':
-    interpreter = Interpreter()
-    interpreter.run()
+    Interpreter().run()
+    #Interpreter(debug=True).run()
