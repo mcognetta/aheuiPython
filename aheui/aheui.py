@@ -1,22 +1,29 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import codecs
+import sys, codecs ,time, argparse
 #import aheui.hangul as hangul
 import hangul
-import time
 
-consonants = ('ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄸ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅃ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ')
-initial = ('ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ')
-vowel = ('ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ')
-final = ('ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㄲ','ㄳ','ㄵ','ㄶ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅄ','ㅆ','ㅇ','ㅎ')
-values = {'':0,'ㄱ':2,'ㄲ':4,'ㄳ':4,'ㄴ':2,'ㄵ':5,'ㄶ':5,'ㄷ':3,'ㄸ':6,'ㄹ':5,'ㄺ':7,'ㄻ':9,'ㄼ':9,'ㄽ':7,'ㄾ':9,'ㄿ':9,'ㅀ':8,'ㅁ':4,'ㅂ':4,'ㅃ':8,'ㅄ':6,'ㅅ':2,'ㅆ':4,'ㅈ':3,'ㅉ':6,'ㅊ':4,'ㅋ':3,'ㅌ':4,'ㅍ':4}
+consonants = ('ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄸ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ',
+              'ㅀ','ㅁ','ㅂ','ㅃ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ')
+
+initial = ('ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ',
+           'ㅋ','ㅌ','ㅍ','ㅎ')
+vowel = ('ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ',
+         'ㅟ','ㅠ','ㅡ','ㅢ','ㅣ')
+
+final = ('ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㄲ','ㄳ','ㄵ','ㄶ',
+         'ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅄ','ㅆ','ㅇ','ㅎ')
+
+values = {'':0,'ㄱ':2,'ㄲ':4,'ㄳ':4,'ㄴ':2,'ㄵ':5,'ㄶ':5,'ㄷ':3,'ㄸ':6,'ㄹ':5,'ㄺ':7,
+         'ㄻ':9,'ㄼ':9,'ㄽ':7,'ㄾ':9,'ㄿ':9,'ㅀ':8,'ㅁ':4,'ㅂ':4,'ㅃ':8,'ㅄ':6,'ㅅ':2,
+         'ㅆ':4,'ㅈ':3,'ㅉ':6,'ㅊ':4,'ㅋ':3,'ㅌ':4,'ㅍ':4}
 
 class Stack:
     def __init__(self):
         self._list = []
 
-    def push(self,data):
+    def push(self, data):
         self._list.append(data)
 
     def pop(self):
@@ -39,11 +46,11 @@ class Queue(Stack):
     def __init__(self):
         self._list = []
 
-    def push(self,data):
+    def push(self, data):
         self._list.insert(0,data)
 
 class Interpreter:
-    def __init__(self, debug = False):
+    def __init__(self, source='', debug=False):
         self.storage = {}
         self.storage_pos = ''
         self.pos = [0,0]
@@ -61,7 +68,7 @@ class Interpreter:
             else:
                 self.storage[c] = Stack()
 
-        if sys.argv[1] != '':
+        if source != '':
             with codecs.open(sys.argv[1],'r',encoding='utf-8') as f:
                 code = f.read().split('\n')
             for line in code:
@@ -69,61 +76,64 @@ class Interpreter:
 
     def set_dir(self, v):
         if v == 'ㅏ':
-            self.dir = (0,1)
+            self.dir = (0, 1)
         elif v == 'ㅑ':
-            self.dir = (0,2)
+            self.dir = (0, 2)
         elif v == 'ㅓ':
-            self.dir = (0,-1)
+            self.dir = (0, -1)
         elif v == 'ㅕ':
-            self.dir = (0,-2)
+            self.dir = (0, -2)
         elif v == 'ㅗ':
-            self.dir = (-1,0)
+            self.dir = (-1, 0)
         elif v == 'ㅛ':
-            self.dir = (-2,0)
+            self.dir = (-2, 0)
         elif v == 'ㅜ':
-            self.dir = (1,0)
+            self.dir = (1, 0)
         elif v == 'ㅠ':
-            self.dir = (2,0)
+            self.dir = (2, 0)
         elif v == 'ㅣ':
-            self.dir = (self.dir[0],-self.dir[1])
+            self.dir = (self.dir[0], -self.dir[1])
         elif v == 'ㅡ':
-            self.dir = (-self.dir[0],self.dir[1])
+            self.dir = (-self.dir[0], self.dir[1])
         elif v == 'ㅢ':
-            self.dir = (-self.dir[0],-self.dir[1])
+            self.dir = (-self.dir[0], -self.dir[1])
 
     def reverse_vowel(self, v):
         if v == 'ㅏ':
-            self.dir = (0,-1)
+            self.dir = (0, -1)
         elif v == 'ㅑ':
-            self.dir = (0,-2)
+            self.dir = (0, -2)
         elif v == 'ㅓ':
-            self.dir = (0,1)
+            self.dir = (0, 1)
         elif v == 'ㅕ':
-            self.dir = (0,2)
+            self.dir = (0, 2)
         elif v == 'ㅗ':
-            self.dir = (1,0)
+            self.dir = (1, 0)
         elif v == 'ㅛ':
-            self.dir = (2,0)
+            self.dir = (2, 0)
         elif v == 'ㅜ':
-            self.dir = (-1,0)
+            self.dir = (-1, 0)
         elif v == 'ㅠ':
-            self.dir = (-2,0)
+            self.dir = (-2, 0)
         elif v == 'ㅣ':
-            self.dir = (-self.dir[0],self.dir[1])
+            self.dir = (-self.dir[0], self.dir[1])
         elif v == 'ㅡ':
-            self.dir = (self.dir[0],-self.dir[1])
+            self.dir = (self.dir[0], -self.dir[1])
         elif v == 'ㅢ':
-            self.dir = (self.dir[0],self.dir[1])
+            self.dir = (self.dir[0], self.dir[1])
 
     def step(self):
 
         if self.debug:
-            print("pos: ",self.pos)
-            print("dir: ",self.dir)
-            print("char: ",self.grid[self.pos[0]][self.pos[1]])
-            print("storage: ",self.storage[self.storage_pos])
-            print("storage_pos: ", self.storage_pos)    
-        #update y then x but what if we exceed both grid edges at the same step
+            print("pos: ", self.pos)
+            print("dir: ", self.dir)
+            print("char: ", self.grid[self.pos[0]][self.pos[1]])
+            print("storage: ", self.storage[self.storage_pos])
+            if self.storage_pos == '':
+                print("storage_pos: \'\'")
+            else:
+                print("storage_pos: ", self.storage_pos)   
+            print() 
 
         char = self.grid[self.pos[0]][self.pos[1]]
 
@@ -137,7 +147,8 @@ class Interpreter:
 
         elif c == 'ㄷ':
             if len(self.storage[self.storage_pos]) >= 2:
-                x,y = self.storage[self.storage_pos].pop(), self.storage[self.storage_pos].pop()
+                x = self.storage[self.storage_pos].pop()
+                y = self.storage[self.storage_pos].pop()
                 self.storage[self.storage_pos].push(x+y)
                 self.set_dir(v)
             else:
@@ -145,7 +156,8 @@ class Interpreter:
 
         elif c == 'ㄸ':
             if len(self.storage[self.storage_pos]) >= 2:
-                x,y = self.storage[self.storage_pos].pop(), self.storage[self.storage_pos].pop()
+                x = self.storage[self.storage_pos].pop()
+                y = self.storage[self.storage_pos].pop()
                 self.storage[self.storage_pos].push(x*y)
                 self.set_dir(v)
             else:
@@ -153,7 +165,8 @@ class Interpreter:
 
         elif c == 'ㄴ':
             if len(self.storage[self.storage_pos]) >= 2:
-                x,y = self.storage[self.storage_pos].pop(), self.storage[self.storage_pos].pop()
+                x = self.storage[self.storage_pos].pop()
+                y = self.storage[self.storage_pos].pop()
                 self.storage[self.storage_pos].push(y//x)
                 self.set_dir(v)
             else:
@@ -161,7 +174,8 @@ class Interpreter:
 
         elif c == 'ㅌ':
             if len(self.storage[self.storage_pos]) >= 2:
-                x,y = self.storage[self.storage_pos].pop(), self.storage[self.storage_pos].pop()
+                x = self.storage[self.storage_pos].pop()
+                y = self.storage[self.storage_pos].pop()
                 self.storage[self.storage_pos].push(y-x)
                 self.set_dir(v)
             else:
@@ -169,7 +183,8 @@ class Interpreter:
 
         elif c == 'ㄹ':
             if len(self.storage[self.storage_pos]) >= 2:
-                x,y = self.storage[self.storage_pos].pop(), self.storage[self.storage_pos].pop()
+                x = self.storage[self.storage_pos].pop()
+                y = self.storage[self.storage_pos].pop()
                 self.storage[self.storage_pos].push(y%x)
                 self.set_dir(v)
             else:
@@ -181,9 +196,13 @@ class Interpreter:
             if f == 'ㅇ':
                 if temp != None:
                     print(temp,end='')
+                    if self.debug:
+                        print()
             elif f == 'ㅎ':
                 if temp != None:
                     print(chr(temp),end='') #here
+                    if self.debug:
+                        print()
 
         elif c == 'ㅂ':
             self.set_dir(v)
@@ -202,7 +221,8 @@ class Interpreter:
         elif c == 'ㅍ':
             self.set_dir(v)
             if len(self.storage[self.storage_pos]) >= 2:
-                x,y = self.storage[self.storage_pos].pop(), self.storage[self.storage_pos].pop()
+                x = self.storage[self.storage_pos].pop()
+                y = self.storage[self.storage_pos].pop()
                 self.storage[self.storage_pos].push(x)
                 self.storage[self.storage_pos].push(y)
 
@@ -217,7 +237,8 @@ class Interpreter:
 
         elif c == 'ㅈ':
             if len(self.storage[self.storage_pos]) >= 2:
-                x,y = self.storage[self.storage_pos].pop(), self.storage[self.storage_pos].pop()
+                x = self.storage[self.storage_pos].pop()
+                y = self.storage[self.storage_pos].pop()
                 if y >= x:
                     self.storage[self.storage_pos].push(1)
                 else:
@@ -259,5 +280,10 @@ class Interpreter:
             self.step()
 
 if __name__ == '__main__':
-    Interpreter().run()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('source', type=str, help='source file for the aheui code')
+    parser.add_argument('-d', '--debug', action='store_true', default=False, dest='debug', help='debug mode for the interpreter')
+    args = parser.parse_args()
+    #parser.add_argument('--log', action='store_true', default=False, dest='logging', help='logging mode for the interpreter, writes to log.txt in cwd')
+    Interpreter(source=args.source, debug=args.debug).run()
     #Interpreter(debug=True).run()
