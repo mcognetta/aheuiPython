@@ -137,124 +137,122 @@ class Interpreter:
 
         char = self.grid[self.pos[0]][self.pos[1]]
 
-        c,v,f = hangul.split_char(char) #return error if it fails
+        if(hangul.is_hangul(char)):
 
-        if c == 'ㅇ':
-            self.set_dir(v)
+            c,v,f = hangul.split_char(char)
 
-        elif c == 'ㅎ':
-            self.go = False
-
-        elif c == 'ㄷ':
-            if len(self.storage[self.storage_pos]) >= 2:
-                x = self.storage[self.storage_pos].pop()
-                y = self.storage[self.storage_pos].pop()
-                self.storage[self.storage_pos].push(x+y)
+            if c == 'ㅇ':
                 self.set_dir(v)
-            else:
-                self.reverse_vowel(v)
 
-        elif c == 'ㄸ':
-            if len(self.storage[self.storage_pos]) >= 2:
-                x = self.storage[self.storage_pos].pop()
-                y = self.storage[self.storage_pos].pop()
-                self.storage[self.storage_pos].push(x*y)
-                self.set_dir(v)
-            else:
-                self.reverse_vowel(v)
+            elif c == 'ㅎ':
+                self.go = False
 
-        elif c == 'ㄴ':
-            if len(self.storage[self.storage_pos]) >= 2:
-                x = self.storage[self.storage_pos].pop()
-                y = self.storage[self.storage_pos].pop()
-                self.storage[self.storage_pos].push(y//x)
-                self.set_dir(v)
-            else:
-                self.reverse_vowel(v)
-
-        elif c == 'ㅌ':
-            if len(self.storage[self.storage_pos]) >= 2:
-                x = self.storage[self.storage_pos].pop()
-                y = self.storage[self.storage_pos].pop()
-                self.storage[self.storage_pos].push(y-x)
-                self.set_dir(v)
-            else:
-                self.reverse_vowel(v)
-
-        elif c == 'ㄹ':
-            if len(self.storage[self.storage_pos]) >= 2:
-                x = self.storage[self.storage_pos].pop()
-                y = self.storage[self.storage_pos].pop()
-                self.storage[self.storage_pos].push(y%x)
-                self.set_dir(v)
-            else:
-                self.reverse_vowel(v)
-
-        elif c == 'ㅁ':
-            temp = self.storage[self.storage_pos].pop()
-            self.set_dir(v)
-            if f == 'ㅇ':
-                if temp != None:
-                    print(temp,end='')
-                    if self.debug:
-                        print()
-            elif f == 'ㅎ':
-                if temp != None:
-                    print(chr(temp),end='') #here
-                    if self.debug:
-                        print()
-
-        elif c == 'ㅂ':
-            self.set_dir(v)
-            if f == 'ㅇ':
-                self.storage[self.storage_pos].push(int(input('enter a number:')))
-            elif f == 'ㅎ':
-                self.storage[self.storage_pos].push(ord(input('enter a char:')))
-            else:
-                self.storage[self.storage_pos].push(values[f])
-
-        elif c == 'ㅃ':
-            self.set_dir(v)
-            if len(self.storage[self.storage_pos]) >= 1:
-                self.storage[self.storage_pos].push(self.storage[self.storage_pos].peek())
-
-        elif c == 'ㅍ':
-            self.set_dir(v)
-            if len(self.storage[self.storage_pos]) >= 2:
-                x = self.storage[self.storage_pos].pop()
-                y = self.storage[self.storage_pos].pop()
-                self.storage[self.storage_pos].push(x)
-                self.storage[self.storage_pos].push(y)
-
-        elif c == 'ㅅ':
-            self.storage_pos = f
-            self.set_dir(v)
-
-        elif c == 'ㅆ':
-            if len(self.storage[self.storage_pos]) >= 1:
-                self.storage[f].push(self.storage[self.storage_pos].pop())
-            self.set_dir(v)
-
-        elif c == 'ㅈ':
-            if len(self.storage[self.storage_pos]) >= 2:
-                x = self.storage[self.storage_pos].pop()
-                y = self.storage[self.storage_pos].pop()
-                if y >= x:
-                    self.storage[self.storage_pos].push(1)
-                else:
-                    self.storage[self.storage_pos].push(0)
-            self.set_dir(v)
-
-        elif c == 'ㅊ':
-            if len(self.storage[self.storage_pos]) >= 1:
-                if self.storage[self.storage_pos].pop() > 0:
+            elif c == 'ㄷ':
+                if len(self.storage[self.storage_pos]) >= 2:
+                    x = self.storage[self.storage_pos].pop()
+                    y = self.storage[self.storage_pos].pop()
+                    self.storage[self.storage_pos].push(x+y)
                     self.set_dir(v)
                 else:
                     self.reverse_vowel(v)
 
-        else:
-            self.go = False
-            return -1
+            elif c == 'ㄸ':
+                if len(self.storage[self.storage_pos]) >= 2:
+                    x = self.storage[self.storage_pos].pop()
+                    y = self.storage[self.storage_pos].pop()
+                    self.storage[self.storage_pos].push(x*y)
+                    self.set_dir(v)
+                else:
+                    self.reverse_vowel(v)
+
+            elif c == 'ㄴ':
+                if len(self.storage[self.storage_pos]) >= 2:
+                    x = self.storage[self.storage_pos].pop()
+                    y = self.storage[self.storage_pos].pop()
+                    self.storage[self.storage_pos].push(y//x)
+                    self.set_dir(v)
+                else:
+                    self.reverse_vowel(v)
+
+            elif c == 'ㅌ':
+                if len(self.storage[self.storage_pos]) >= 2:
+                    x = self.storage[self.storage_pos].pop()
+                    y = self.storage[self.storage_pos].pop()
+                    self.storage[self.storage_pos].push(y-x)
+                    self.set_dir(v)
+                else:
+                    self.reverse_vowel(v)
+
+            elif c == 'ㄹ':
+                if len(self.storage[self.storage_pos]) >= 2:
+                    x = self.storage[self.storage_pos].pop()
+                    y = self.storage[self.storage_pos].pop()
+                    self.storage[self.storage_pos].push(y%x)
+                    self.set_dir(v)
+                else:
+                    self.reverse_vowel(v)
+
+            elif c == 'ㅁ':
+                temp = self.storage[self.storage_pos].pop()
+                self.set_dir(v)
+                if f == 'ㅇ':
+                    if temp != None:
+                        print(temp,end='')
+                        if self.debug:
+                            print()
+                elif f == 'ㅎ':
+                    if temp != None:
+                        print(chr(temp),end='') #here
+                        if self.debug:
+                            print()
+
+            elif c == 'ㅂ':
+                self.set_dir(v)
+                if f == 'ㅇ':
+                    self.storage[self.storage_pos].push(int(input('enter a number:')))
+                elif f == 'ㅎ':
+                    self.storage[self.storage_pos].push(ord(input('enter a char:')))
+                else:
+                    self.storage[self.storage_pos].push(values[f])
+
+            elif c == 'ㅃ':
+                self.set_dir(v)
+                if len(self.storage[self.storage_pos]) >= 1:
+                    self.storage[self.storage_pos].push(self.storage[self.storage_pos].peek())
+
+            elif c == 'ㅍ':
+                self.set_dir(v)
+                if len(self.storage[self.storage_pos]) >= 2:
+                    x = self.storage[self.storage_pos].pop()
+                    y = self.storage[self.storage_pos].pop()
+                    self.storage[self.storage_pos].push(x)
+                    self.storage[self.storage_pos].push(y)
+
+            elif c == 'ㅅ':
+                self.storage_pos = f
+                self.set_dir(v)
+
+            elif c == 'ㅆ':
+                if len(self.storage[self.storage_pos]) >= 1:
+                    self.storage[f].push(self.storage[self.storage_pos].pop())
+                self.set_dir(v)
+
+            elif c == 'ㅈ':
+                if len(self.storage[self.storage_pos]) >= 2:
+                    x = self.storage[self.storage_pos].pop()
+                    y = self.storage[self.storage_pos].pop()
+                    if y >= x:
+                        self.storage[self.storage_pos].push(1)
+                    else:
+                        self.storage[self.storage_pos].push(0)
+                self.set_dir(v)
+
+            elif c == 'ㅊ':
+                if len(self.storage[self.storage_pos]) >= 1:
+                    if self.storage[self.storage_pos].pop() > 0:
+                        self.set_dir(v)
+                    else:
+                        self.reverse_vowel(v)
 
         if self.dir[0] > 0 and self.pos[0]+self.dir[0] >= len(self.grid):
             self.pos[0] = 0

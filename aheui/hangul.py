@@ -50,6 +50,8 @@ def char_offset(char):
 
 def is_hangul(char):
     """Checks if the given character is written in Hangul."""
+    if(char == ''):
+        return False
     return ord(char) in HANGUL_RANGE
 
 def is_vowel(char):
