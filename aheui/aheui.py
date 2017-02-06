@@ -287,26 +287,23 @@ class Interpreter:
 
         #if character is not 한글 it skips to here
 
-        #TODO:
-        #get the correct row if there is an index out of range error
-        #get the correct row/col when wrapping around especially when there are ㅕ type vowels
+        if self.dir[0] != 0:
+            counter = 0
+            new_row = self.pos[0]
+            while True:
+                if self.dir[0] > 0:
+                    new_row = (new_row+1) % len(self.grid)
+                else:
+                    new_row = (new_row-1) % len(self.grid)
 
-        if self.dir[0] > 0 and self.pos[0]+self.dir[0] >= len(self.grid): #hit the bottom
-            self.pos[0] = 0
+                if self.pos[1] <= len(self.grid[new_row])-1:
+                    counter += 1
+                    if counter == abs(self.dir[0]):
+                        break
+            self.pos[0] = new_row
 
-        elif self.dir[0] < 0 and self.pos[0]+self.dir[0] < 0: #hit the top
-            self.pos[0] = len(self.grid)-1
-        
-        elif self.dir[1] > 0 and self.pos[1]+self.dir[1] >= len(self.grid[self.pos[0]]): #hit the right
-            self.pos[1] = 0
-
-        elif self.dir[1] < 0 and self.pos[1]+self.dir[1] < 0: #hit the left
-            self.pos[1] = len(self.grid[self.pos[0]])-1
-
-        else:    #moves regularly inside the grid
-            self.pos[0] += self.dir[0]
-            self.pos[1] += self.dir[1]
-
+        else:
+            self.pos[1] = (self.pos[1]+self.dir[1]) % len(self.grid[self.pos[0]])
 
     def run(self):
         """Begins the interpretation of the aheui program"""
