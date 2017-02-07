@@ -24,7 +24,10 @@ Examples:
         > aheui.eval('밤밣따빠밣밟따맣희')
 """
 
-import sys, codecs, time, argparse
+import sys
+import codecs
+import time
+import argparse
 import hangul
 
 values = {'':0, 'ㄱ':2, 'ㄲ':4, 'ㄳ':4, 'ㄴ':2, 'ㄵ':5, 'ㄶ':5, 'ㄷ':3, 'ㄸ':6,
@@ -32,7 +35,7 @@ values = {'':0, 'ㄱ':2, 'ㄲ':4, 'ㄳ':4, 'ㄴ':2, 'ㄵ':5, 'ㄶ':5, 'ㄷ':3, '
           'ㅂ':4, 'ㅃ':8, 'ㅄ':6, 'ㅅ':2, 'ㅆ':4, 'ㅈ':3, 'ㅉ':6, 'ㅊ':4, 'ㅋ':3,
           'ㅌ':4, 'ㅍ':4}
 
-class Stack:
+class Stack(object):
     """Stack class for the interpreter.
 
     Contains the code that implements our stack. In the interpreter we only
@@ -73,7 +76,7 @@ class Queue(Stack):
     def push(self, data):
         self._list.insert(0, data)
 
-class Interpreter:
+class Interpreter(object):
     """Main Interpreter class
 
     Contains the code to set up and execute the interpretation of aheui code.
