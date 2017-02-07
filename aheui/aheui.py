@@ -1,22 +1,31 @@
 # -*- coding: utf-8 -*-
 
+"""Interpreter for the Aheui (아희) programming language.
+
+This module implements a Python interpreter for the Aheui programming language,
+an esoteric programming language based on Befunge and written with the Korean
+alphabet (힌글 or hangul).
+
+The language has a fairly simple specification which can be found at:
+    https://aheui.github.io/
+
+Examples:
+    An example execution of the interpreter is:
+
+        > python aheui.py hello_world.aheui
+
+    To enter debug mode you can use the flag '-d' or '--debug':
+
+        > python aheui.py hello_world.aheui -d
+
+    You can also interpret arbritrary aheui code via the eval method:
+
+        > import aheui
+        > aheui.eval('밤밣따빠밣밟따맣희')
+"""
+
 import sys, codecs, time, argparse
-#import aheui.hangul as hangul
 import hangul
-
-consonants = ('ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ',
-              'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ',
-              'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ')
-
-initial = ('ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ',
-           'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ')
-
-vowel = ('ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ',
-         'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ')
-
-final = ('ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㄲ',
-         'ㄳ', 'ㄵ', 'ㄶ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅄ', 'ㅆ', 'ㅇ',
-         'ㅎ')
 
 values = {'':0, 'ㄱ':2, 'ㄲ':4, 'ㄳ':4, 'ㄴ':2, 'ㄵ':5, 'ㄶ':5, 'ㄷ':3, 'ㄸ':6,
           'ㄹ':5, 'ㄺ':7, 'ㄻ':9, 'ㄼ':9, 'ㄽ':7, 'ㄾ':9, 'ㄿ':9, 'ㅀ':8, 'ㅁ':4,
@@ -24,6 +33,13 @@ values = {'':0, 'ㄱ':2, 'ㄲ':4, 'ㄳ':4, 'ㄴ':2, 'ㄵ':5, 'ㄶ':5, 'ㄷ':3, '
           'ㅌ':4, 'ㅍ':4}
 
 class Stack:
+    """Stack class for the interpreter
+
+    Contains the code that implements our stack. In the interpreter we only
+    need to be able to push, pop, peek, and check the size of the stack. We
+    also include a __str__ method for the debugging mode.
+    """
+
     def __init__(self):
         self._list = []
 
@@ -33,12 +49,9 @@ class Stack:
     def pop(self):
         if len(self._list) > 0:
             return self._list.pop()
-    
+
     def peek(self):
         return self._list[-1]
-
-    def size(self):
-        return len(self._list)
 
     def __len__(self):
         return len(self._list)
@@ -47,8 +60,15 @@ class Stack:
         return str(self._list)
 
 class Queue(Stack):
+    """Queue class for the interpreter
+
+    Contains the code that implements our queue. This contains all the same
+    functionality as the stack except for the push command so basically
+    everything is overwritten.
+    """
+
     def __init__(self):
-        self._list = []
+        Stack.__init__(self)
 
     def push(self, data):
         self._list.insert(0, data)
@@ -72,17 +92,17 @@ class Interpreter:
         debug: a boolean to toggle debugging mode on or off
     """
 
-    def __init__(self, source='', debug=False):
+    def __init__(self, source='', debug=False, eval_code=''):
         self.storage = {}
         self.storage_pos = ''
         self.pos = [0, 0]
-        self.dir = (1, 0) #(y,x)
+        self.momentum = (1, 0) #(y,x)
         self.grid = []
         self.go = True
         self.debug = debug
 
         self.storage[''] = Stack()
-        for c in final:
+        for c in hangul.FINALS:
             if c == 'ㅇ':
                 self.storage[c] = Queue()
             elif c == 'ㅎ':
@@ -90,7 +110,10 @@ class Interpreter:
             else:
                 self.storage[c] = Stack()
 
-        if source != '':
+        if eval_code != '':
+            self.grid = [line for line in eval_code.split('\n')]
+
+        elif source != '':
             with codecs.open(sys.argv[1], 'r', encoding='utf-8') as f:
                 code = f.read().split('\n')
             for line in code:
@@ -101,54 +124,54 @@ class Interpreter:
            cursor"""
 
         if v == 'ㅏ':
-            self.dir = (0, 1)
+            self.momentum = (0, 1)
         elif v == 'ㅑ':
-            self.dir = (0, 2)
+            self.momentum = (0, 2)
         elif v == 'ㅓ':
-            self.dir = (0, -1)
+            self.momentum = (0, -1)
         elif v == 'ㅕ':
-            self.dir = (0, -2)
+            self.momentum = (0, -2)
         elif v == 'ㅗ':
-            self.dir = (-1, 0)
+            self.momentum = (-1, 0)
         elif v == 'ㅛ':
-            self.dir = (-2, 0)
+            self.momentum = (-2, 0)
         elif v == 'ㅜ':
-            self.dir = (1, 0)
+            self.momentum = (1, 0)
         elif v == 'ㅠ':
-            self.dir = (2, 0)
+            self.momentum = (2, 0)
         elif v == 'ㅣ':
-            self.dir = (self.dir[0], -self.dir[1])
+            self.momentum = (self.momentum[0], -self.momentum[1])
         elif v == 'ㅡ':
-            self.dir = (-self.dir[0], self.dir[1])
+            self.momentum = (-self.momentum[0], self.momentum[1])
         elif v == 'ㅢ':
-            self.dir = (-self.dir[0], -self.dir[1])
+            self.momentum = (-self.momentum[0], -self.momentum[1])
 
-    def reverse_vowel(self, v):
+    def reverse_momentum(self, v):
         """Given the current vowel, determines the momentum for the cursor in
            the case that it is reflected (due to bad stack pop, etc)"""
 
         if v == 'ㅏ':
-            self.dir = (0, -1)
+            self.momentum = (0, -1)
         elif v == 'ㅑ':
-            self.dir = (0, -2)
+            self.momentum = (0, -2)
         elif v == 'ㅓ':
-            self.dir = (0, 1)
+            self.momentum = (0, 1)
         elif v == 'ㅕ':
-            self.dir = (0, 2)
+            self.momentum = (0, 2)
         elif v == 'ㅗ':
-            self.dir = (1, 0)
+            self.momentum = (1, 0)
         elif v == 'ㅛ':
-            self.dir = (2, 0)
+            self.momentum = (2, 0)
         elif v == 'ㅜ':
-            self.dir = (-1, 0)
+            self.momentum = (-1, 0)
         elif v == 'ㅠ':
-            self.dir = (-2, 0)
+            self.momentum = (-2, 0)
         elif v == 'ㅣ':
-            self.dir = (-self.dir[0], self.dir[1])
+            self.momentum = (-self.momentum[0], self.momentum[1])
         elif v == 'ㅡ':
-            self.dir = (self.dir[0], -self.dir[1])
+            self.momentum = (self.momentum[0], -self.momentum[1])
         elif v == 'ㅢ':
-            self.dir = (self.dir[0], self.dir[1])
+            self.momentum = (self.momentum[0], self.momentum[1])
 
     def step(self):
         """Performs one step of the interpretation, getting the character,
@@ -157,14 +180,14 @@ class Interpreter:
 
         if self.debug:
             print("pos: ", self.pos)
-            print("dir: ", self.dir)
+            print("dir: ", self.momentum)
             print("char: ", self.grid[self.pos[0]][self.pos[1]])
             print("storage: ", self.storage[self.storage_pos])
             if self.storage_pos == '':
                 print("storage_pos: \'\'")
             else:
                 print("storage_pos: ", self.storage_pos)
-            print() 
+            print()
 
         char = self.grid[self.pos[0]][self.pos[1]]
 
@@ -185,7 +208,7 @@ class Interpreter:
                     self.storage[self.storage_pos].push(x+y)
                     self.set_dir(v)
                 else:
-                    self.reverse_vowel(v)
+                    self.reverse_momentum(v)
 
             elif c == 'ㄸ':
                 if len(self.storage[self.storage_pos]) >= 2:
@@ -194,7 +217,7 @@ class Interpreter:
                     self.storage[self.storage_pos].push(x*y)
                     self.set_dir(v)
                 else:
-                    self.reverse_vowel(v)
+                    self.reverse_momentum(v)
 
             elif c == 'ㄴ':
                 if len(self.storage[self.storage_pos]) >= 2:
@@ -203,7 +226,7 @@ class Interpreter:
                     self.storage[self.storage_pos].push(y//x)
                     self.set_dir(v)
                 else:
-                    self.reverse_vowel(v)
+                    self.reverse_momentum(v)
 
             elif c == 'ㅌ':
                 if len(self.storage[self.storage_pos]) >= 2:
@@ -212,7 +235,7 @@ class Interpreter:
                     self.storage[self.storage_pos].push(y-x)
                     self.set_dir(v)
                 else:
-                    self.reverse_vowel(v)
+                    self.reverse_momentum(v)
 
             elif c == 'ㄹ':
                 if len(self.storage[self.storage_pos]) >= 2:
@@ -221,7 +244,7 @@ class Interpreter:
                     self.storage[self.storage_pos].push(y%x)
                     self.set_dir(v)
                 else:
-                    self.reverse_vowel(v)
+                    self.reverse_momentum(v)
 
             elif c == 'ㅁ':
                 temp = self.storage[self.storage_pos].pop()
@@ -283,27 +306,27 @@ class Interpreter:
                     if self.storage[self.storage_pos].pop() > 0:
                         self.set_dir(v)
                     else:
-                        self.reverse_vowel(v)
+                        self.reverse_momentum(v)
 
         #if character is not 한글 it skips to here
 
-        if self.dir[0] != 0:
+        if self.momentum[0] != 0:
             counter = 0
             new_row = self.pos[0]
             while True:
-                if self.dir[0] > 0:
+                if self.momentum[0] > 0:
                     new_row = (new_row+1) % len(self.grid)
                 else:
                     new_row = (new_row-1) % len(self.grid)
 
                 if self.pos[1] <= len(self.grid[new_row])-1:
                     counter += 1
-                    if counter == abs(self.dir[0]):
+                    if counter == abs(self.momentum[0]):
                         break
             self.pos[0] = new_row
 
         else:
-            self.pos[1] = (self.pos[1]+self.dir[1]) % len(self.grid[self.pos[0]])
+            self.pos[1] = (self.pos[1]+self.momentum[1]) % len(self.grid[self.pos[0]])
 
     def run(self):
         """Begins the interpretation of the aheui program"""
@@ -313,14 +336,25 @@ class Interpreter:
                 time.sleep(1)
             self.step()
 
+def eval(code, debug=False):
+    """Interprets Aheui code passed as a string parameter"""
+
+    Interpreter(debug=debug, eval_code=code).run()
+
 if __name__ == '__main__':
+
     parser = argparse.ArgumentParser()
     parser.add_argument('source', type=str,
                         help='source file for the aheui code')
 
     parser.add_argument('-d', '--debug', action='store_true', default=False,
                         dest='debug', help='debug mode for the interpreter')
+
+    '''
+    parser.add_argument('--log', action='store_true', default=False,
+                        dest='logging', help='logging mode for the interpreter,\
+                        writes to log.txt in cwd')
+    '''
+
     args = parser.parse_args()
-    #parser.add_argument('--log', action='store_true', default=False, dest='logging', help='logging mode for the interpreter, writes to log.txt in cwd')
     Interpreter(source=args.source, debug=args.debug).run()
-    #Interpreter(debug=True).run()
