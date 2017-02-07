@@ -101,12 +101,12 @@ class Interpreter:
         self.go = True
         self.debug = debug
 
-        self.storage[''] = Stack()
-        for c in hangul.FINALS:
+        self.storage[''] = Stack()    # '' is not included in hangul.FINALS
+        for c in hangul.FINALS:    #list of final consonants
             if c == 'ㅇ':
                 self.storage[c] = Queue()
             elif c == 'ㅎ':
-                pass #protocol?
+                pass     #protocol is still not well defined
             else:
                 self.storage[c] = Stack()
 
@@ -119,7 +119,7 @@ class Interpreter:
             for line in code:
                 self.grid.append(line)
 
-    def set_dir(self, v):
+    def set_momentum(self, v):
         """Given the current vowel and momentum, determines the momentum for the
            cursor"""
 
@@ -196,7 +196,7 @@ class Interpreter:
             c, v, f = hangul.split_char(char)
 
             if c == 'ㅇ':
-                self.set_dir(v)
+                self.set_momentum(v)
 
             elif c == 'ㅎ':
                 self.go = False
@@ -206,7 +206,7 @@ class Interpreter:
                     x = self.storage[self.storage_pos].pop()
                     y = self.storage[self.storage_pos].pop()
                     self.storage[self.storage_pos].push(x+y)
-                    self.set_dir(v)
+                    self.set_momentum(v)
                 else:
                     self.reverse_momentum(v)
 
@@ -215,7 +215,7 @@ class Interpreter:
                     x = self.storage[self.storage_pos].pop()
                     y = self.storage[self.storage_pos].pop()
                     self.storage[self.storage_pos].push(x*y)
-                    self.set_dir(v)
+                    self.set_momentum(v)
                 else:
                     self.reverse_momentum(v)
 
@@ -224,7 +224,7 @@ class Interpreter:
                     x = self.storage[self.storage_pos].pop()
                     y = self.storage[self.storage_pos].pop()
                     self.storage[self.storage_pos].push(y//x)
-                    self.set_dir(v)
+                    self.set_momentum(v)
                 else:
                     self.reverse_momentum(v)
 
@@ -233,7 +233,7 @@ class Interpreter:
                     x = self.storage[self.storage_pos].pop()
                     y = self.storage[self.storage_pos].pop()
                     self.storage[self.storage_pos].push(y-x)
-                    self.set_dir(v)
+                    self.set_momentum(v)
                 else:
                     self.reverse_momentum(v)
 
@@ -242,13 +242,13 @@ class Interpreter:
                     x = self.storage[self.storage_pos].pop()
                     y = self.storage[self.storage_pos].pop()
                     self.storage[self.storage_pos].push(y%x)
-                    self.set_dir(v)
+                    self.set_momentum(v)
                 else:
                     self.reverse_momentum(v)
 
             elif c == 'ㅁ':
                 temp = self.storage[self.storage_pos].pop()
-                self.set_dir(v)
+                self.set_momentum(v)
                 if f == 'ㅇ':
                     if temp != None:
                         print(temp, end='')
@@ -261,7 +261,7 @@ class Interpreter:
                             print()
 
             elif c == 'ㅂ':
-                self.set_dir(v)
+                self.set_momentum(v)
                 if f == 'ㅇ':
                     self.storage[self.storage_pos].push(int(input()))
                 elif f == 'ㅎ':
@@ -270,12 +270,12 @@ class Interpreter:
                     self.storage[self.storage_pos].push(values[f])
 
             elif c == 'ㅃ':
-                self.set_dir(v)
+                self.set_momentum(v)
                 if len(self.storage[self.storage_pos]) >= 1:
                     self.storage[self.storage_pos].push(self.storage[self.storage_pos].peek())
 
             elif c == 'ㅍ':
-                self.set_dir(v)
+                self.set_momentum(v)
                 if len(self.storage[self.storage_pos]) >= 2:
                     x = self.storage[self.storage_pos].pop()
                     y = self.storage[self.storage_pos].pop()
@@ -284,12 +284,12 @@ class Interpreter:
 
             elif c == 'ㅅ':
                 self.storage_pos = f
-                self.set_dir(v)
+                self.set_momentum(v)
 
             elif c == 'ㅆ':
                 if len(self.storage[self.storage_pos]) >= 1:
                     self.storage[f].push(self.storage[self.storage_pos].pop())
-                self.set_dir(v)
+                self.set_momentum(v)
 
             elif c == 'ㅈ':
                 if len(self.storage[self.storage_pos]) >= 2:
@@ -299,12 +299,12 @@ class Interpreter:
                         self.storage[self.storage_pos].push(1)
                     else:
                         self.storage[self.storage_pos].push(0)
-                self.set_dir(v)
+                self.set_momentum(v)
 
             elif c == 'ㅊ':
                 if len(self.storage[self.storage_pos]) >= 1:
                     if self.storage[self.storage_pos].pop() > 0:
-                        self.set_dir(v)
+                        self.set_momentum(v)
                     else:
                         self.reverse_momentum(v)
 
