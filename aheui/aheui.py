@@ -33,7 +33,7 @@ values = {'':0, 'ㄱ':2, 'ㄲ':4, 'ㄳ':4, 'ㄴ':2, 'ㄵ':5, 'ㄶ':5, 'ㄷ':3, '
           'ㅌ':4, 'ㅍ':4}
 
 class Stack:
-    """Stack class for the interpreter
+    """Stack class for the interpreter.
 
     Contains the code that implements our stack. In the interpreter we only
     need to be able to push, pop, peek, and check the size of the stack. We
@@ -60,7 +60,7 @@ class Stack:
         return str(self._list)
 
 class Queue(Stack):
-    """Queue class for the interpreter
+    """Queue class for the interpreter.
 
     Contains the code that implements our queue. This contains all the same
     functionality as the stack except for the push command so basically
@@ -85,7 +85,7 @@ class Interpreter:
                      used
         pos: a 2 element list representing the current position of the cursor
              in the code
-        dir: a 2 element tuple represeting the current momentum of the cursor
+        momentum: a 2 element tuple represeting the current momentum of the cursor
         grid: a list populated by the lines of code in the source file
         go: a boolean that allows us to know when the program should terminate
             in case of an error or when hitting a ㅎ initial consonant
