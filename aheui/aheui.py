@@ -320,6 +320,8 @@ class Interpreter(object):
                         self.set_momentum(v)
                     else:
                         self.reverse_momentum(v)
+                else:
+                    self.reverse_momentum(v)
 
         #if character is not 한글 it skips to here
 
