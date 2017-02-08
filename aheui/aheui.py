@@ -109,7 +109,8 @@ class Interpreter(object):
             if c == 'ㅇ':
                 self.storage[c] = Queue()
             elif c == 'ㅎ':
-                pass     #protocol is still not well defined
+                self.storage[c] = Queue()    #protocol is still not well defined
+                #pass
             else:
                 self.storage[c] = Stack()
 
@@ -170,9 +171,9 @@ class Interpreter(object):
         elif v == 'ㅠ':
             self.momentum = (-2, 0)
         elif v == 'ㅣ':
-            self.momentum = (-self.momentum[0], self.momentum[1])
+            self.momentum = (self.momentum[0], self.momentum[1])
         elif v == 'ㅡ':
-            self.momentum = (self.momentum[0], -self.momentum[1])
+            self.momentum = (self.momentum[0], self.momentum[1])
         elif v == 'ㅢ':
             self.momentum = (self.momentum[0], self.momentum[1])
 
@@ -250,18 +251,21 @@ class Interpreter(object):
                     self.reverse_momentum(v)
 
             elif c == 'ㅁ':
-                temp = self.storage[self.storage_pos].pop()
-                self.set_momentum(v)
-                if f == 'ㅇ':
-                    if temp != None:
-                        print(temp, end='')
-                        if self.debug:
-                            print()
-                elif f == 'ㅎ':
-                    if temp != None:
-                        print(chr(temp), end='') #here
-                        if self.debug:
-                            print()
+                if len(self.storage[self.storage_pos]) >= 1:
+                    temp = self.storage[self.storage_pos].pop()
+                    self.set_momentum(v)
+                    if f == 'ㅇ':
+                        if temp != None:
+                            print(temp, end='')
+                            if self.debug:
+                                print()
+                    elif f == 'ㅎ':
+                        if temp != None:
+                            print(chr(temp), end='') #here
+                            if self.debug:
+                                print()
+                else:
+                    self.reverse_momentum(v)
 
             elif c == 'ㅂ':
                 self.set_momentum(v)
@@ -278,12 +282,14 @@ class Interpreter(object):
                     self.storage[self.storage_pos].push(self.storage[self.storage_pos].peek())
 
             elif c == 'ㅍ':
-                self.set_momentum(v)
                 if len(self.storage[self.storage_pos]) >= 2:
+                    self.set_momentum(v)
                     x = self.storage[self.storage_pos].pop()
                     y = self.storage[self.storage_pos].pop()
                     self.storage[self.storage_pos].push(x)
                     self.storage[self.storage_pos].push(y)
+                else:
+                    self.reverse_momentum(v)
 
             elif c == 'ㅅ':
                 self.storage_pos = f
@@ -291,22 +297,26 @@ class Interpreter(object):
 
             elif c == 'ㅆ':
                 if len(self.storage[self.storage_pos]) >= 1:
+                    self.set_momentum(v)
                     self.storage[f].push(self.storage[self.storage_pos].pop())
-                self.set_momentum(v)
+                else:
+                    self.reverse_momentum(v)
 
             elif c == 'ㅈ':
                 if len(self.storage[self.storage_pos]) >= 2:
+                    self.set_momentum(v)
                     x = self.storage[self.storage_pos].pop()
                     y = self.storage[self.storage_pos].pop()
                     if y >= x:
                         self.storage[self.storage_pos].push(1)
                     else:
                         self.storage[self.storage_pos].push(0)
-                self.set_momentum(v)
+                else:
+                    self.reverse_momentum(v)
 
             elif c == 'ㅊ':
                 if len(self.storage[self.storage_pos]) >= 1:
-                    if self.storage[self.storage_pos].pop() > 0:
+                    if self.storage[self.storage_pos].pop() != 0:
                         self.set_momentum(v)
                     else:
                         self.reverse_momentum(v)
@@ -336,7 +346,8 @@ class Interpreter(object):
 
         while self.go:
             if self.debug:
-                time.sleep(1)
+                #time.sleep(1)
+                pass
             self.step()
 
 def eval(code, debug=False):
