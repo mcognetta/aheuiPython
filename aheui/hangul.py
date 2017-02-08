@@ -15,7 +15,7 @@ from __future__ import unicode_literals
 """
 
 """
-The only changes are removing the six.moves dependency and xrange -> range 
+The only changes are removing the six.moves dependency and xrange -> range
 """
 
 __all__ = ['char_offset', 'is_hangul', 'is_vowel', 'is_consonant',
