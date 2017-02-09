@@ -280,6 +280,8 @@ class Interpreter(object):
                 self.set_momentum(v)
                 if len(self.storage[self.storage_pos]) >= 1:
                     self.storage[self.storage_pos].push(self.storage[self.storage_pos].peek())
+                else:
+                    self.reverse_momentum(v)
 
             elif c == 'ㅍ':
                 if len(self.storage[self.storage_pos]) >= 2:
