@@ -350,7 +350,7 @@ class Interpreter(object):
 
         while self.go:
             if self.debug:
-                #time.sleep(1)
+                time.sleep(1)
                 pass
             self.step()
 
