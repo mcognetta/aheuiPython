@@ -76,6 +76,9 @@ class Queue(Stack):
     def push(self, data):
         self._list.insert(0, data)
 
+    def swap(self):
+        self._list[-1], self._list[-2] = self._list[-2], self._list[-1]
+
 class Interpreter(object):
     """Main Interpreter class
 
@@ -261,7 +264,7 @@ class Interpreter(object):
                                 print()
                     elif f == 'ㅎ':
                         if temp != None:
-                            print(chr(temp), end='') #here
+                            print(chr(temp), end='')
                             if self.debug:
                                 print()
                 else:
@@ -286,10 +289,13 @@ class Interpreter(object):
             elif c == 'ㅍ':
                 if len(self.storage[self.storage_pos]) >= 2:
                     self.set_momentum(v)
-                    x = self.storage[self.storage_pos].pop()
-                    y = self.storage[self.storage_pos].pop()
-                    self.storage[self.storage_pos].push(x)
-                    self.storage[self.storage_pos].push(y)
+                    if self.storage_pos == 'ㅎ': #queue
+                        self.storage[self.storage_pos].swap()
+                    else:
+                        x = self.storage[self.storage_pos].pop()
+                        y = self.storage[self.storage_pos].pop()
+                        self.storage[self.storage_pos].push(x)
+                        self.storage[self.storage_pos].push(y)
                 else:
                     self.reverse_momentum(v)
 
