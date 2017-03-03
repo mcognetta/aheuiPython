@@ -102,7 +102,7 @@ class Interpreter(object):
         self.storage = {}
         self.storage_pos = ''
         self.pos = [0, 0]
-        self.momentum = (1, 0) #(y,x)
+        self.momentum = (1, 0)    #(y,x)
         self.grid = []
         self.go = True
         self.debug = debug
@@ -113,7 +113,6 @@ class Interpreter(object):
                 self.storage[c] = Queue()
             elif c == 'ㅎ':
                 self.storage[c] = Queue()    #protocol is still not well defined
-                #pass
             else:
                 self.storage[c] = Stack()
 
