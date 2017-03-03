@@ -18,7 +18,7 @@ Examples:
 
         > python aheui.py hello_world.aheui -d
 
-    You can also interpret arbritrary aheui code via the eval method:
+    You can also interpret arbitrary aheui code via the eval method:
 
         > import aheui
         > aheui.eval('밤밣따빠밣밟따맣희')
