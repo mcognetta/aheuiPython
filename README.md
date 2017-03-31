@@ -17,25 +17,25 @@ Below is a sample of the output from the debug mode:
 
 ```
 pos:  [23, 16]
-dir:  (1, 0)
+momentum:  (1, 0)
 char:  뿌
 storage:  [99]
 storage_pos: ''
 
 pos:  [24, 16]
-dir:  (1, 0)
+momentum:  (1, 0)
 char:  숨
 storage:  [99, 99]
 storage_pos: ''
 
 pos:  [25, 16]
-dir:  (1, 0)
+momentum:  (1, 0)
 char:  빠
 storage:  [97]
 storage_pos:  ㅁ
 
 pos:  [25, 17]
-dir:  (0, 1)
+momentum:  (0, 1)
 char:  본
 storage:  [97, 97]
 storage_pos:  ㅁ

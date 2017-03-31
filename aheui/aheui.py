@@ -185,7 +185,7 @@ class Interpreter(object):
 
         if self.debug:
             print("pos: ", self.pos)
-            print("dir: ", self.momentum)
+            print("momentum: ", self.momentum)
             print("char: ", self.grid[self.pos[0]][self.pos[1]])
             print("storage: ", self.storage[self.storage_pos])
             if self.storage_pos == '':
