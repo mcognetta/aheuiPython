@@ -350,7 +350,7 @@ class Interpreter(object):
         else:
             self.pos[1] = (self.pos[1]+self.momentum[1]) % len(self.grid[self.pos[0]])
 
-    def run(self):
+    def interpret(self):
         """Begins the interpretation of the aheui program"""
 
         while self.go:
@@ -362,7 +362,7 @@ class Interpreter(object):
 def eval(code, debug=False):
     """Interprets Aheui code passed as a string parameter"""
 
-    Interpreter(debug=debug, eval_code=code).run()
+    Interpreter(debug=debug, eval_code=code).interpret()
 
 if __name__ == '__main__':
 
@@ -380,4 +380,4 @@ if __name__ == '__main__':
     '''
 
     args = parser.parse_args()
-    Interpreter(source=args.source, debug=args.debug).run()
+    Interpreter(source=args.source, debug=args.debug).interpret()
