@@ -26,7 +26,6 @@ Examples:
 
 import sys
 import codecs
-import time
 import argparse
 import hangul
 
