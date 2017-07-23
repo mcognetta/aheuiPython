@@ -62,7 +62,10 @@ class Stack(object):
         return str(self._list)
 
 class Queue(Stack):
-    """Queue class for the interpreter."""
+    """Queue class for the interpreter.
+
+    Swap is defined for the ㅍ command.
+    """
 
     def __init__(self):
         Stack.__init__(self)
@@ -71,6 +74,12 @@ class Queue(Stack):
         self._list.insert(0, data)
 
     def swap(self):
+        """This takes the two topmost values in the queue and reverses them then
+        places them back on top.
+
+        This will only be called when there are at least 2 element in the queue.
+        """
+
         self._list[-1], self._list[-2] = self._list[-2], self._list[-1]
 
 class Interpreter(object):
