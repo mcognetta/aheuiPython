@@ -319,11 +319,11 @@ class Interpreter(object):
             print("pos: ", self.pos)
             print("momentum: ", self.momentum)
             print("char: ", self.grid[self.pos[0]][self.pos[1]])
-            print("storage: ", self.storage[self.storage_pos])
             if self.storage_pos == '':
                 print("storage_pos: \'\'")
             else:
                 print("storage_pos: ", self.storage_pos)
+            print("storage: ", self.storage[self.storage_pos])
             print()
 
         if self.momentum[0] != 0:
