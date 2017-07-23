@@ -62,12 +62,7 @@ class Stack(object):
         return str(self._list)
 
 class Queue(Stack):
-    """Queue class for the interpreter.
-
-    Contains the code that implements our queue. This contains all the same
-    functionality as the stack except for the push command so basically
-    everything is overwritten.
-    """
+    """Queue class for the interpreter."""
 
     def __init__(self):
         Stack.__init__(self)
@@ -182,17 +177,6 @@ class Interpreter(object):
         """Performs one step of the interpretation, getting the character,
            executing the associated instruction(s), updating the position,
            stack position, and momentum"""
-
-        if self.debug:
-            print("pos: ", self.pos)
-            print("momentum: ", self.momentum)
-            print("char: ", self.grid[self.pos[0]][self.pos[1]])
-            print("storage: ", self.storage[self.storage_pos])
-            if self.storage_pos == '':
-                print("storage_pos: \'\'")
-            else:
-                print("storage_pos: ", self.storage_pos)
-            print()
 
         char = self.grid[self.pos[0]][self.pos[1]]
 
@@ -331,6 +315,17 @@ class Interpreter(object):
 
         #if character is not 한글 it skips to here
 
+        if self.debug:
+            print("pos: ", self.pos)
+            print("momentum: ", self.momentum)
+            print("char: ", self.grid[self.pos[0]][self.pos[1]])
+            print("storage: ", self.storage[self.storage_pos])
+            if self.storage_pos == '':
+                print("storage_pos: \'\'")
+            else:
+                print("storage_pos: ", self.storage_pos)
+            print()
+
         if self.momentum[0] != 0:
             counter = 0
             new_row = self.pos[0]
@@ -368,12 +363,6 @@ if __name__ == '__main__':
 
     parser.add_argument('-d', '--debug', action='store_true', default=False,
                         dest='debug', help='debug mode for the interpreter')
-
-    '''
-    parser.add_argument('--log', action='store_true', default=False,
-                        dest='logging', help='logging mode for the interpreter,\
-                        writes to log.txt in cwd')
-    '''
 
     args = parser.parse_args()
     Interpreter(source=args.source, debug=args.debug).interpret()
