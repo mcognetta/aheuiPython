@@ -46,7 +46,8 @@ storage:  [4]
 As you may notice, each step of the code will print the position in the grid,
 the current momentum, the current character, the current storage location, and
 the contents of the current storage. If the current symbol outputs something,
-the output will be displayed before the debug block for that step.
+the output will be displayed before the debug block for that step (be aware that
+the output may be whitespace and will just show up as a blank line).
 
 Note that if the current storage is a stack, when displayed, the right most
 symbol is the top. If if is a queue, the left most symbol is the back of the
