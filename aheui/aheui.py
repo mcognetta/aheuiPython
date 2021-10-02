@@ -353,16 +353,28 @@ class Interpreter(object):
         else:
             self.pos[1] = (self.pos[1]+self.momentum[1]) % len(self.grid[self.pos[0]])
 
-    def interpret(self):
+    def interpret(self, max_steps=None):
         """Begins the interpretation of the aheui program"""
+        cur_step = 0
+        if max_steps:
+            while self.go and cur_step < max_steps:
+                self.step()
+                if self.debug:
+                    print(f"cur_step: {cur_step}")
+                    print()
+                cur_step += 1
+        else:
+            while self.go:
+                self.step()
+                if self.debug:
+                    print(f"cur_step: {cur_step}")
+                    print()
+                cur_step += 1
 
-        while self.go:
-            self.step()
-
-def eval(code, debug=False):
+def eval(code, debug=False, max_steps=None):
     """Interprets Aheui code passed as a string parameter"""
 
-    Interpreter(debug=debug, eval_code=code).interpret()
+    Interpreter(debug=debug, eval_code=code).interpret(max_steps=max_steps)
 
 if __name__ == '__main__':
 
