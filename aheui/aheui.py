@@ -28,6 +28,7 @@ import sys
 import codecs
 import argparse
 import hangul
+import random
 
 values = {'':0, 'ㄱ':2, 'ㄲ':4, 'ㄳ':4, 'ㄴ':2, 'ㄵ':5, 'ㄶ':5, 'ㄷ':3, 'ㄸ':6,
           'ㄹ':5, 'ㄺ':7, 'ㄻ':9, 'ㄼ':9, 'ㄽ':7, 'ㄾ':9, 'ㄿ':9, 'ㅀ':8, 'ㅁ':4,
@@ -250,12 +251,14 @@ class Interpreter(object):
                     self.set_momentum(v)
                     if f == 'ㅇ':
                         if temp != None:
-                            print(temp, end='')
+                            pass
+                            # print(temp, end='')
                             if self.debug:
                                 print()
                     elif f == 'ㅎ':
                         if temp != None:
-                            print(chr(temp), end='')
+                            pass
+                            # print(chr(temp), end='')
                             if self.debug:
                                 print()
                 else:
@@ -264,9 +267,11 @@ class Interpreter(object):
             elif c == 'ㅂ':
                 self.set_momentum(v)
                 if f == 'ㅇ':
-                    self.storage[self.storage_pos].push(int(input()))
+                    pass
+                    # self.storage[self.storage_pos].push(int(input()))
                 elif f == 'ㅎ':
-                    self.storage[self.storage_pos].push(ord(input()))
+                    pass
+                    # self.storage[self.storage_pos].push(ord(input()))
                 else:
                     self.storage[self.storage_pos].push(values[f])
 
@@ -333,6 +338,8 @@ class Interpreter(object):
             else:
                 print("storage_pos: ", self.storage_pos)
             print("storage: ", self.storage[self.storage_pos])
+            print("go: ", self.go)
+            print(random.choice('abc'))
             print()
 
         if self.momentum[0] != 0:
@@ -353,16 +360,31 @@ class Interpreter(object):
         else:
             self.pos[1] = (self.pos[1]+self.momentum[1]) % len(self.grid[self.pos[0]])
 
-    def interpret(self):
+        if not self.go:
+            return
+
+    def interpret(self, max_steps=None):
         """Begins the interpretation of the aheui program"""
+        if max_steps:
+            cur_step = 0
 
-        while self.go:
-            self.step()
+            while self.go and cur_step < max_steps:
+                self.step()
+                cur_step += 1
+                if self.debug:
+                    print("cur_step:", cur_step)
+        else:
+            while self.go:
+                self.step()
+        return self.go
 
-def eval(code, debug=False):
+
+def eval(code, debug=False, max_steps=None):
     """Interprets Aheui code passed as a string parameter"""
-
-    Interpreter(debug=debug, eval_code=code).interpret()
+    try:
+        return Interpreter(debug=debug, eval_code=code).interpret(max_steps=max_steps)
+    except:
+        return False
 
 if __name__ == '__main__':
 
